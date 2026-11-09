@@ -1,0 +1,14 @@
+{
+  "name": "orion-api",
+  "version": "1.0.0",
+  "description": "API + PostgreSQL + Adminer - Desafio Extra",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
