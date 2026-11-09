@@ -1,0 +1,65 @@
+# Base da stack com a configuração de produção.
+# Desenvolvimento: docker-compose.override.yml (aplicado automaticamente)
+name: exercicio-extra-prod
+
+services:
+  api:
+    build:
+      context: ./api
+    image: orion-api:1.0.0
+    ports:
+      - "${PROD_API_PORT:-3001}:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      # -h localhost testa por TCP, como a API conecta (o servidor temporário da
+      # primeira inicialização só aceita socket local).
+      # $$ evita que o Compose interpole; a variável é lida dentro do container
+      test: ["CMD-SHELL", "pg_isready -h localhost -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:4.8.1
+    ports:
+      - "${PROD_ADMINER_PORT:-8081}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+# O Compose prefixa os nomes com o nome do projeto (ex: exercicio-extra-prod_db-data),
+# então dev e prod têm rede e banco separados
+networks:
+  app-network:
+
+volumes:
+  db-data:

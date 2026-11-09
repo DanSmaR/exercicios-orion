@@ -1,0 +1,19 @@
+# Camada de desenvolvimento, aplicada automaticamente pelo `docker compose up`.
+# Para rodar em produção (sem este arquivo): docker compose -f docker-compose.yml up -d
+name: exercicio-extra-dev
+
+services:
+  api:
+    # O Node reinicia sozinho quando o código montado muda
+    command: ["node", "--watch", "src/index.js"]
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./api/src:/app/src
+    # !override substitui as portas da base em vez de somar às dela
+    ports: !override
+      - "${DEV_API_PORT:-3000}:3000"
+
+  adminer:
+    ports: !override
+      - "${DEV_ADMINER_PORT:-8080}:8080"
