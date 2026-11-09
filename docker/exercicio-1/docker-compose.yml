@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hello-container:1.0.0
+    container_name: hello-container
+    ports:
+      - "3000:3000"
+    volumes:
+      # Volume opcional: reflete alterações em ./src dentro do container
+      # (reinicie o container para aplicar: docker compose restart)
+      - ./src:/app/src:ro
+    restart: unless-stopped
