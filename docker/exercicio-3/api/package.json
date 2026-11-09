@@ -1,0 +1,17 @@
+{
+  "name": "items-api",
+  "version": "1.0.0",
+  "description": "API + PostgreSQL com ambientes dev/prod - Exercício 3",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon --legacy-watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

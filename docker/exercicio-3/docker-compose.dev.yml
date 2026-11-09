@@ -1,0 +1,37 @@
+name: exercicio-3-dev
+
+services:
+  api:
+    build:
+      context: ./api
+      target: dev
+    image: items-api:dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      # Código local montado no container: o nodemon reinicia a cada alteração
+      - ./api/src:/app/src
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      # Exposto apenas em dev, para inspecionar o banco com um cliente local
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
